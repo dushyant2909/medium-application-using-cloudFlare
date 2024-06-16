@@ -1,13 +1,61 @@
 import axios from "axios";
 import { BACKEND_URL } from "../config";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ChangeEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../features/authSlice";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { SignupInput } from "@dushyant2909/medium-common";
+
+interface LabelledInputType {
+  label: string;
+  placeholder: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
+  name: string;
+  [key: string]: any; // Allow additional props
+}
+
+function LabelledInput({
+  label,
+  placeholder,
+  onChange,
+  type,
+  name,
+  ...restprops
+}: LabelledInputType) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  return (
+    <div className="relative">
+      <label className="block mb-2 text-sm text-black font-semibold">
+        {label}
+      </label>
+      <input
+        onChange={onChange}
+        type={showPassword ? "text" : type || "text"}
+        name={name}
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        placeholder={placeholder}
+        required
+        {...restprops}
+      />
+      {type === "password" && (
+        <div
+          className="absolute top-10 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer"
+          onClick={togglePasswordVisibility}
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   const dispatch = useDispatch();
@@ -68,9 +116,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         <div className="text-center">
           <div className="text-3xl font-extrabold">
-            {type === "signup"
-              ? "Create an account"
-              : "Login to your account"}
+            {type === "signup" ? "Create an account" : "Login to your account"}
           </div>
           <div className="text-gray-500">
             {type === "signin"
@@ -89,6 +135,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
             <LabelledInput
               label="Name"
               placeholder="John Doe.."
+              name="name"
               onChange={(e) => {
                 setPostInputs({
                   ...postInputs,
@@ -99,6 +146,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
           )}
           <LabelledInput
             label="Email"
+            name="email"
             placeholder="youremail@gmail.com"
             onChange={(e) => {
               setPostInputs({
@@ -111,6 +159,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
           <LabelledInput
             label="Password"
             type="password"
+            name="password"
             placeholder="12345 (Atleast 4 chars)"
             onChange={(e) => {
               setPostInputs({
@@ -131,49 +180,3 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     </div>
   );
 };
-
-interface LabelledInputType {
-  label: string;
-  placeholder: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  type?: string;
-  [key: string]: any; // Allow additional props
-}
-
-function LabelledInput({
-  label,
-  placeholder,
-  onChange,
-  type,
-  ...restprops
-}: LabelledInputType) {
-  const [showPassword, setShowPassword] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  return (
-    <div className="relative">
-      <label className="block mb-2 text-sm text-black font-semibold">
-        {label}
-      </label>
-      <input
-        onChange={onChange}
-        type={showPassword ? "text" : type || "text"}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-        placeholder={placeholder}
-        required
-        {...restprops}
-      />
-      {type === "password" && (
-        <div
-          className="absolute top-10 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer"
-          onClick={togglePasswordVisibility}
-        >
-          {showPassword ? <FaEyeSlash /> : <FaEye />}
-        </div>
-      )}
-    </div>
-  );
-}
