@@ -1,7 +1,7 @@
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate, Link } from "react-router-dom";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../features/authSlice";
