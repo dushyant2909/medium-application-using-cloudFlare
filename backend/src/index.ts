@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { userRouter } from "./routes/user.route";
 import { blogRouter } from "./routes/blog.route";
+import { cors } from "hono/cors";
 
 const app = new Hono<{
   Bindings: {
@@ -12,6 +13,8 @@ const app = new Hono<{
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
+
+app.use("/*", cors());
 
 // Add prefix for route
 app.route("/api/v1/user", userRouter);

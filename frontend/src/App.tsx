@@ -1,18 +1,31 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Signup } from "./pages/Signup";
-import { Signin } from "./pages/Signin";
-import { Blog } from "./pages/Blog";
+import { Outlet, useLocation } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { Appbar } from "./components/Appbar";
+import { getCurrentUser } from "./hooks";
+import Loader from "./components/Loader";
 
 function App() {
+  const location = useLocation();
+
+  // Check if the current path is /signup or /signin
+  const hideAppbar =
+    location.pathname === "/signup" || location.pathname === "/signin";
+
+  const { loading } = getCurrentUser();
+
+  if (loading) {
+    return <Loader />;
+  }
+  
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/blog/:id" element={<Blog />} />
-        </Routes>
-      </BrowserRouter>
+      <div>
+        {!hideAppbar && <Appbar />} {/* Conditionally render Appbar */}
+        <main>
+          <Outlet />
+        </main>
+        <Toaster position="top-center" reverseOrder={false} />
+      </div>
     </>
   );
 }
