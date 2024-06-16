@@ -5,7 +5,8 @@ interface BlogCardProps {
   title: string;
   content: string;
   publishedDate: string;
-  id: number;
+  id: string;
+  authorId: string;
 }
 
 export const BlogCard = ({
@@ -20,7 +21,7 @@ export const BlogCard = ({
       to={`/blog/${id}`}
       className="block transition duration-300 transform hover:scale-105"
     >
-      <div className="p-6 border border-gray-200 rounded-lg shadow-sm bg-white hover:shadow-md w-full max-w-screen-md mx-auto">
+      <div className="p-6 border border-gray-200 rounded-lg shadow-sm bg-white hover:shadow-md md:w-full mx-5 max-w-screen-md md:mx-auto">
         <div className="flex items-center mb-4">
           <Avatar name={authorName} />
           <div className="ml-3">

@@ -85,19 +85,16 @@ blogRouter.post("/", async (c) => {
   }
 });
 
-blogRouter.put("/", async (c) => {
+blogRouter.put("/:id", async (c) => {
   const body = await c.req.json();
+
+  const id = c.req.param("id");
 
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
   try {
-    if (!body.id) {
-      c.status(400);
-      return c.json({ error: "ID is required" });
-    }
-
     // Define an interface for the dataToUpdate object
     interface UpdateData {
       title?: string;
@@ -111,7 +108,7 @@ blogRouter.put("/", async (c) => {
 
     const blog = await prisma.post.update({
       where: {
-        id: body.id,
+        id: id,
       },
       data: dataToUpdate,
     });
@@ -144,6 +141,8 @@ blogRouter.get("/bulk", async (c) => {
             name: true,
           },
         },
+        createdAt: true,
+        authorId: true,
       },
     });
 
@@ -180,6 +179,8 @@ blogRouter.get("/:id", async (c) => {
             name: true,
           },
         },
+        createdAt: true,
+        authorId: true,
       },
     });
 

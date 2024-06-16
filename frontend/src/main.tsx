@@ -12,6 +12,7 @@ import { Publish } from "./pages/Publish.tsx";
 import { Provider } from "react-redux";
 import store from "./store/store.ts";
 import AuthLayout from "./components/AuthLayout.tsx";
+import { Editblog } from "./pages/Editblog.tsx";
 
 const router = createBrowserRouter([
   {
@@ -44,11 +45,27 @@ const router = createBrowserRouter([
       },
       {
         path: "/blog/:id",
-        element: <Blog />,
+        element: (
+          <AuthLayout authentication>
+            <Blog />
+          </AuthLayout>
+        ),
       },
       {
         path: "/publish",
-        element: <Publish />,
+        element: (
+          <AuthLayout authentication>
+            <Publish />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/edit/blog/:id",
+        element: (
+          <AuthLayout authentication>
+            <Editblog />
+          </AuthLayout>
+        ),
       },
     ],
   },

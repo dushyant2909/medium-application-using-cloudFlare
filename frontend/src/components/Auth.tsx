@@ -1,15 +1,16 @@
-import { ChangeEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { SignupInput } from "@dushyant2909/medium-common";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { useNavigate, useParams } from "react-router-dom";
+import { ChangeEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../features/authSlice";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { SignupInput } from "@dushyant2909/medium-common";
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
   const [postInputs, setPostInputs] = useState<SignupInput>({
     name: "",
@@ -63,73 +64,69 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   }
 
   return (
-    <div className="h-screen flex justify-center flex-col">
-      <div className="flex justify-center">
-        <div>
-          <div className="px-10">
-            <div className="text-3xl font-extrabold">
-              {type === "signup"
-                ? "Create an account"
-                : "Login to your account"}
-            </div>
-            <div className="text-slate-500">
-              {type === "signin"
-                ? "Don't have an account?"
-                : "Already have an account?"}
-              <Link
-                className="pl-2 underline"
-                to={type === "signin" ? "/signup" : "/signin"}
-              >
-                {type === "signin" ? "Sign up" : "Sign in"}
-              </Link>
-            </div>
+    <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+        <div className="text-center">
+          <div className="text-3xl font-extrabold">
+            {type === "signup"
+              ? "Create an account"
+              : "Login to your account"}
           </div>
-          <div className="pt-8">
-            <form onSubmit={sendRequest}>
-              {type === "signup" && (
-                <LabelledInput
-                  label="Name"
-                  placeholder="John Doe.."
-                  onChange={(e) => {
-                    setPostInputs({
-                      ...postInputs,
-                      name: e.target.value,
-                    });
-                  }}
-                />
-              )}
-              <LabelledInput
-                label="Email"
-                placeholder="youremail@gmail.com"
-                onChange={(e) => {
-                  setPostInputs({
-                    ...postInputs,
-                    email: e.target.value,
-                  });
-                }}
-                autoComplete="username"
-              />
-              <LabelledInput
-                label="Password"
-                type="password"
-                placeholder="123456"
-                onChange={(e) => {
-                  setPostInputs({
-                    ...postInputs,
-                    password: e.target.value,
-                  });
-                }}
-                autoComplete="current-password"
-              />
-              <button
-                type="submit"
-                className="mt-8 w-full text-white bg-gray-800 hover:bg-grXay-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-              >
-                {type === "signup" ? "Sign Up" : "Sign in"}
-              </button>
-            </form>
+          <div className="text-gray-500">
+            {type === "signin"
+              ? "Don't have an account?"
+              : "Already have an account?"}
+            <Link
+              className="pl-2 underline"
+              to={type === "signin" ? "/signup" : "/signin"}
+            >
+              {type === "signin" ? "Sign up" : "Sign in"}
+            </Link>
           </div>
         </div>
+        <form className="mt-8 flex flex-col gap-2" onSubmit={sendRequest}>
+          {type === "signup" && (
+            <LabelledInput
+              label="Name"
+              placeholder="John Doe.."
+              onChange={(e) => {
+                setPostInputs({
+                  ...postInputs,
+                  name: e.target.value,
+                });
+              }}
+            />
+          )}
+          <LabelledInput
+            label="Email"
+            placeholder="youremail@gmail.com"
+            onChange={(e) => {
+              setPostInputs({
+                ...postInputs,
+                email: e.target.value,
+              });
+            }}
+            autoComplete="username"
+          />
+          <LabelledInput
+            label="Password"
+            type="password"
+            placeholder="12345 (Atleast 4 chars)"
+            onChange={(e) => {
+              setPostInputs({
+                ...postInputs,
+                password: e.target.value,
+              });
+            }}
+            autoComplete="current-password"
+          />
+          <button
+            type="submit"
+            className="mt-8 w-full bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 text-white font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            {type === "signup" ? "Sign Up" : "Sign in"}
+          </button>
+        </form>
       </div>
     </div>
   );
@@ -150,19 +147,33 @@ function LabelledInput({
   type,
   ...restprops
 }: LabelledInputType) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
-    <div>
-      <label className="block mb-2 text-sm text-black font-semibold pt-4">
+    <div className="relative">
+      <label className="block mb-2 text-sm text-black font-semibold">
         {label}
       </label>
       <input
         onChange={onChange}
-        type={type || "text"}
+        type={showPassword ? "text" : type || "text"}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
         placeholder={placeholder}
         required
         {...restprops}
       />
+      {type === "password" && (
+        <div
+          className="absolute top-10 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer"
+          onClick={togglePasswordVisibility}
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </div>
+      )}
     </div>
   );
 }

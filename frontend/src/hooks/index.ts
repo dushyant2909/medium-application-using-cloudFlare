@@ -7,10 +7,12 @@ import { login, logout } from "../features/authSlice";
 export interface Blog {
   content: string;
   title: string;
-  id: number;
+  id: string;
   author: {
     name: string;
   };
+  createdAt: string;
+  authorId: string;
 }
 
 export const useBlog = ({ id }: { id: string }) => {
@@ -92,3 +94,42 @@ export const getCurrentUser = () => {
     loading,
   };
 };
+
+// Utility function to format dates
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.getMonth(); // getMonth() returns 0-based month index
+  const year = date.getFullYear();
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const daySuffix = (day: number) => {
+    if (day > 3 && day < 21) return "th"; // Covers 11th, 12th, 13th
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  };
+
+  return `${day}${daySuffix(day)} ${monthNames[month]} ${year}`;
+}
