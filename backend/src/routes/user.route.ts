@@ -16,32 +16,30 @@ export const userRouter = new Hono<{
 
 userRouter.post("/signup", async (c) => {
   const body = await c.req.json();
+  
+  // const { success } = signupInput.safeParse(body);
 
-  const { success } = signupInput.safeParse(body);
-
-  if (!success) {
-    c.status(411);
-    return c.json({
-      message: "Inputs not in correct format",
-    });
-  }
+  // if (!success) {
+  //   c.status(411);
+  //   return c.json({
+  //     message: "Inputs not in correct format",
+  //   });
+  // }
 
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
+
   try {
     // Check if the user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: body.email },
-    });
-
-    if (existingUser) {
-      c.status(409);
-      return c.json({ error: "Email already in use" });
-    }
-
+    // const existingUser = await prisma.user.findUnique({
+    //   where: { email: body.email },
+    // });
+    // if (existingUser) {
+    //   c.status(409);
+    //   return c.json({ error: "Email already in use" });
+    // }
     const imageSeed = body.name[0];
-
     // Create a new user
     const user = await prisma.user.create({
       data: {
@@ -51,9 +49,7 @@ userRouter.post("/signup", async (c) => {
         thumbnail: `https://api.dicebear.com/5.x/initials/svg?seed=${imageSeed}`,
       },
     });
-
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-
     return c.json({ jwt });
   } catch (e) {
     console.log("Error in singup route::", e);

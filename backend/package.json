@@ -5,10 +5,10 @@
   },
   "dependencies": {
     "@dushyant2909/medium-common": "^1.0.0",
-    "@prisma/client": "^5.15.0",
+    "@prisma/client": "^5.19.1",
     "@prisma/extension-accelerate": "^1.1.0",
-    "hono": "^4.4.5",
-    "prisma": "^5.15.0"
+    "hono": "^4.6.3",
+    "prisma": "^5.19.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240529.0",
