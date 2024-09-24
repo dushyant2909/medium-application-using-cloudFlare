@@ -2,7 +2,11 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
-// import { createBlogPostInput } from "@dushyant2909/medium-common";
+import {
+  updatePostInput,
+  createPostInput,
+  UpdatePostType,
+} from "@dushyant2909/medium-common";
 
 export const blogRouter = new Hono<{
   Bindings: {
@@ -55,14 +59,15 @@ blogRouter.use("/*", async (c, next) => {
 blogRouter.post("/", async (c) => {
   const body = await c.req.json();
 
-  //   const { success } = createBlogPostInput.safeParse(body);
+  const { success } = createPostInput.safeParse(body);
 
-  //   if (!success) {
-  //     c.status(411);
-  //     return c.json({
-  //       message: "Inputs not in correct format",
-  //     });
-  //   }
+  if (!success) {
+    c.status(411);
+    return c.json({
+      success: false,
+      message: "Inputs not in correct format",
+    });
+  }
 
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
@@ -128,6 +133,15 @@ blogRouter.put("/:id", async (c) => {
 
   const body = await c.req.json();
 
+  const { success } = updatePostInput.safeParse(body);
+  if (!success) {
+    c.status(411);
+    return c.json({
+      success: false,
+      message: "Inputs not in correct format",
+    });
+  }
+
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -160,14 +174,8 @@ blogRouter.put("/:id", async (c) => {
       });
     }
 
-    // Define an interface for the dataToUpdate object
-    interface UpdateData {
-      title?: string;
-      content?: string;
-    }
-
     // Initialize dataToUpdate with the correct type
-    const dataToUpdate: UpdateData = {};
+    const dataToUpdate: UpdatePostType = {};
     if (body.title) dataToUpdate.title = body.title;
     if (body.content) dataToUpdate.content = body.content;
 

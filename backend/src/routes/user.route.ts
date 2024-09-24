@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
+import { signinInput, signupInput } from "@dushyant2909/medium-common";
 
 // Use Bindings to define the type of variables used in .env
 // Use Variables to define the type of variable used in token
@@ -19,14 +20,14 @@ export const userRouter = new Hono<{
 userRouter.post("/signup", async (c) => {
   const body = await c.req.json();
 
-  // const { success } = signupInput.safeParse(body);
-
-  // if (!success) {
-  //   c.status(411);
-  //   return c.json({
-  //     message: "Inputs not in correct format",
-  //   });
-  // }
+  const { success } = signupInput.safeParse(body);
+  if (!success) {
+    c.status(400);
+    return c.json({
+      success: false,
+      message: "Inputs not in correct format",
+    });
+  }
 
   //   Initialise prisma client
   const prisma = new PrismaClient({
@@ -78,14 +79,15 @@ userRouter.post("/signup", async (c) => {
 userRouter.post("/signin", async (c) => {
   const body = await c.req.json();
 
-  //   const { success } = signinInput.safeParse(body);
+  const { success } = signinInput.safeParse(body);
 
-  //   if (!success) {
-  //     c.status(411);
-  //     return c.json({
-  //       message: "Inputs not in correct format",
-  //     });
-  //   }
+  if (!success) {
+    c.status(411);
+    return c.json({
+      success: false,
+      message: "Inputs not in correct format",
+    });
+  }
 
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
