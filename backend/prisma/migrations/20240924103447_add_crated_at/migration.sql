@@ -5,4 +5,5 @@
 
 */
 -- AlterTable
-ALTER TABLE "Post" DROP COLUMN "published";
+ALTER TABLE "Post" DROP COLUMN "published",
+ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
