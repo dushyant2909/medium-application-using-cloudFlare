@@ -204,6 +204,75 @@ blogRouter.put("/:id", async (c) => {
   }
 });
 
+blogRouter.delete("/:id", async (c) => {
+  const blogId = c.req.param("id");
+
+  // Get logged-in user id from the token
+  const userId = c.get("userId");
+
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  try {
+    // Find the blog post to check ownership
+    const existingPost = await prisma.post.findUnique({
+      where: {
+        id: blogId,
+      },
+      select: {
+        authorId: true,
+      },
+    });
+
+    // Check if the post exists
+    if (!existingPost) {
+      return c.json(
+        {
+          success: false,
+          message: "Blog post not found",
+        },
+        404
+      );
+    }
+
+    // Check if the logged-in user is the owner of the post
+    if (existingPost.authorId !== userId) {
+      return c.json(
+        {
+          success: false,
+          message: "You are not authorized to delete this post",
+        },
+        403
+      );
+    }
+
+    // Delete the blog post
+    await prisma.post.delete({
+      where: {
+        id: blogId, // Delete post by its ID
+      },
+    });
+
+    // Return success response
+    return c.json({
+      success: true,
+      message: "Blog post deleted successfully",
+    });
+  } catch (error) {
+    return c.json(
+      {
+        success: false,
+        message: "Error while deleting the blog post",
+        error,
+      },
+      500
+    );
+  } finally {
+    await prisma.$disconnect();
+  }
+});
+
 // Get blogs in bulk
 blogRouter.get("/bulk", async (c) => {
   const prisma = new PrismaClient({
