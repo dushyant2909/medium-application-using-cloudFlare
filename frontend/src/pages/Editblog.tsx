@@ -30,7 +30,7 @@ export const Editblog = () => {
         { headers: { Authorization: localStorage.getItem("token") } }
       );
 
-      navigate(`/blog/${response.data.id}`);
+      navigate(`/blog/${response.data.post.id}`);
       toast.success("Blog updated successfully");
     } catch (e: any) {
       console.log("Error in updating blog:", e);

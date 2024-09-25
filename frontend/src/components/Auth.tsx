@@ -67,6 +67,13 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
   });
 
   async function fetchData() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      dispatch(logout());
+      return;
+    }
+
     try {
       const response = await axios.get(`${BACKEND_URL}/api/v1/user/me`, {
         headers: {
