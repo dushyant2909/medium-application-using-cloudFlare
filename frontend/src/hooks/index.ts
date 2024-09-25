@@ -68,13 +68,22 @@ export const getCurrentUser = () => {
 
   useEffect(() => {
     async function fetchData() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        dispatch(logout()); // Optionally, you can log out
+        setLoading(false); // End loading since there's no token
+        return;
+      }
+
       try {
         const response = await axios.get(`${BACKEND_URL}/api/v1/user/me`, {
           headers: {
             Authorization: localStorage.getItem("token"),
           },
         });
-        const userData = response.data.user;
+
+        const userData = response?.data.user;
 
         if (userData) {
           dispatch(login({ userData }));
