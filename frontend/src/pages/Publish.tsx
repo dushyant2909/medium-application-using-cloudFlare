@@ -3,19 +3,23 @@ import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
+import Loader from "../components/Loader";
 
 export const Publish = () => {
+  const [clicked, setclicked] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const navigate = useNavigate();
   const publishHandler = async () => {
     try {
+      setclicked(true);
       const response = await axios.post(
         `${BACKEND_URL}/api/v1/blog`,
         { title, content: description },
         { headers: { Authorization: localStorage.getItem("token") } }
       );
-      navigate(`/blog/${response.data.id}`);
+      console.log("RESP::", response);
+      navigate(`/blog/${response.data.blogId}`);
       toast.success("Published successfully");
     } catch (e: any) {
       console.log("Error in publishing blog::", e);
@@ -24,11 +28,15 @@ export const Publish = () => {
           e.response.data.message ||
           "Error while publishing blog"
       );
+    } finally {
+      setclicked(false);
     }
   };
+
+  if (clicked) return <Loader message="Publishing"/>;
   return (
-    <div className="min-h-screen flex justify-center items-center mt-10 md:mt-0 bg-gray-100 py-8 px-4">
-      <div className="max-w-screen-md w-full mx-2 md:mx-auto bg-white p-4 md:p-8 rounded-lg shadow-md">
+    <div className="min-h-screen flex justify-center items-center mt-10 md:mt-0  bg-pink-50 pt-10 px-4">
+      <div className="max-w-screen-md w-full mx-2 md:mx-auto bg-white border border-gray-400 p-4 md:p-8 rounded-lg shadow-md">
         <h1 className="text-3xl font-semibold mb-6 text-center text-gray-800">
           Publish Your Blog
         </h1>
