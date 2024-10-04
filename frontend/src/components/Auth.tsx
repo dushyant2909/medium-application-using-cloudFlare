@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { login, logout } from "../features/authSlice";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { SignupInput } from "@dushyant2909/medium-common";
+import Loader from "./Loader";
 
 interface LabelledInputType {
   label: string;
@@ -58,6 +59,7 @@ function LabelledInput({
 }
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
+  const [clicked, setClicked] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [postInputs, setPostInputs] = useState<SignupInput>({
@@ -94,6 +96,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
   async function sendRequest(event: React.FormEvent) {
     event.preventDefault(); // Prevents the default form submission behavior
+    setClicked(true); // Start showing loader
     try {
       const response = await axios.post(
         `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
@@ -103,29 +106,34 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
       const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
 
-      fetchData();
+      await fetchData(); // Fetch user details after login/signup
 
       if (type === "signup") toast.success("User registered successfully");
       else toast.success("Logged in successfully");
-      navigate("/");
+
+      navigate("/"); // Redirect after successful login/signup
     } catch (e: any) {
-      console.log("Error while signup::", e);
-      toast.error(
-        e.response.data.error ||
-          e.response.data.message ||
-          "Error while signing up"
-      );
+      const errorMessage =
+        e.response?.data?.error ||
+        e.response?.data?.message ||
+        "Error occurred during sign up";
+      toast.error(errorMessage);
+    } finally {
+      setClicked(false); // Hide loader in both success and failure cases
     }
   }
 
+  // Show Loader when clicked is true
+  if (clicked) return <Loader />;
+
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100 px-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+    <div className="min-h-screen flex justify-center items-center bg-pink-50 px-4">
+      <div className="max-w-md w-full bg-white border border-gray-200 shadow-lg p-8 rounded-lg">
         <div className="text-center">
-          <div className="text-3xl font-extrabold">
+          <div className="md:text-3xl text-2xl font-extrabold">
             {type === "signup" ? "Create an account" : "Login to your account"}
           </div>
-          <div className="text-gray-500">
+          <div className="text-gray-500 text-sm md:text-lg">
             {type === "signin"
               ? "Don't have an account?"
               : "Already have an account?"}
@@ -137,7 +145,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
             </Link>
           </div>
         </div>
-        <form className="mt-8 flex flex-col gap-2" onSubmit={sendRequest}>
+        <form className="mt-6 md:mt-8 flex flex-col gap-2" onSubmit={sendRequest}>
           {type === "signup" && (
             <LabelledInput
               label="Name"
@@ -167,7 +175,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
             label="Password"
             type="password"
             name="password"
-            placeholder="12345 (Atleast 4 chars)"
+            placeholder="12345 (At least 4 chars)"
             onChange={(e) => {
               setPostInputs({
                 ...postInputs,

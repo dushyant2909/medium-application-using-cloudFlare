@@ -25,7 +25,7 @@ userRouter.post("/signup", async (c) => {
     c.status(400);
     return c.json({
       success: false,
-      message: "Inputs not in correct format",
+      message: "Inputs are not in correct format",
     });
   }
 
@@ -85,7 +85,7 @@ userRouter.post("/signin", async (c) => {
     c.status(411);
     return c.json({
       success: false,
-      message: "Inputs not in correct format",
+      message: "Inputs are not in correct format",
     });
   }
 
@@ -101,7 +101,7 @@ userRouter.post("/signin", async (c) => {
 
     if (!user) {
       c.status(403); // unauthorised
-      return c.json({ error: "User not found" });
+      return c.json({ error: "User not found, kindly register yourself" });
     }
 
     // Compare the provided password with the stored hashed password

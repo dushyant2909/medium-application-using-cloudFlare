@@ -7,6 +7,7 @@ import { useBlog } from "../hooks";
 import Loader from "../components/Loader";
 
 export const Editblog = () => {
+  const [clicked, setclicked] = useState(false);
   const { id } = useParams();
   const { loading, blog } = useBlog({ id: id || "" });
 
@@ -24,6 +25,7 @@ export const Editblog = () => {
 
   const editHandler = async () => {
     try {
+      setclicked(true);
       const response = await axios.put(
         `${BACKEND_URL}/api/v1/blog/${id}`,
         { title, content: description },
@@ -39,14 +41,16 @@ export const Editblog = () => {
           e.response?.data?.message ||
           "Error while updating blog"
       );
+    } finally {
+      setclicked(false);
     }
   };
 
-  if (loading) return <Loader />;
+  if (loading || clicked) return <Loader />;
 
   return (
-    <div className="min-h-screen flex justify-center items-center mt-10 md:mt-0 bg-gray-100 py-8 px-4">
-      <div className="max-w-screen-md w-full mx-2 md:mx-auto bg-white p-4 md:p-8 rounded-lg shadow-md">
+    <div className="min-h-screen flex justify-center items-center mt-10 md:mt-0 bg-pink-50 py-8 px-4">
+      <div className="max-w-screen-md w-full mx-2 md:mx-auto bg-white border border-gray-300 p-4 md:p-8 rounded-lg shadow-md">
         <h1 className="text-3xl font-semibold mb-6 text-center text-gray-800">
           Edit Your Blog
         </h1>

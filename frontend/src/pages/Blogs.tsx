@@ -7,7 +7,7 @@ export const Blogs = () => {
 
   if (loading) {
     return (
-      <div className="mt-[60px] flex justify-center">
+      <div className="mt-[60px] flex justify-center bg-pink-50">
         <div>
           <BlogSkeleton />
           <BlogSkeleton />
@@ -19,20 +19,18 @@ export const Blogs = () => {
   }
 
   return (
-    <div className="mt-20 mb-5 flex justify-center">
-      <div className="flex flex-col gap-3">
-        {blogs.map((blog) => (
-          <BlogCard
-            key={blog.id}
-            id={blog.id}
-            authorName={blog.author.name || "Anonymous"}
-            title={blog.title}
-            content={blog.content}
-            authorId={blog.authorId}
-            publishedDate={formatDate(blog.createdAt)}
-          />
-        ))}
-      </div>
+    <div className="min-h-screen pt-20 pb-8 flex flex-col justify-center bg-pink-50 items-center gap-5 px-4">
+      {blogs.map((blog) => (
+        <BlogCard
+          key={blog.id}
+          id={blog.id}
+          authorName={blog.author.name || "Anonymous"}
+          title={blog.title}
+          content={blog.content}
+          authorId={blog.authorId}
+          publishedDate={formatDate(blog.createdAt)}
+        />
+      ))}
     </div>
   );
 };

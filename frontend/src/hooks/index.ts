@@ -9,9 +9,11 @@ export interface Blog {
   title: string;
   id: string;
   author: {
+    email: string;
     name: string;
   };
   createdAt: string;
+  updatedAt: string;
   authorId: string;
 }
 

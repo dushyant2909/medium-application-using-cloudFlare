@@ -10,37 +10,36 @@ interface BlogCardProps {
 }
 
 export const BlogCard = ({
-  id,
   authorName,
   title,
   content,
   publishedDate,
+  id,
 }: BlogCardProps) => {
   return (
-    <Link
-      to={`/blog/${id}`}
-      className="block transition duration-300 transform hover:scale-105"
-    >
-      <div className="p-6 border border-gray-200 rounded-lg shadow-sm bg-white hover:shadow-md md:w-full mx-5 max-w-screen-md md:mx-auto">
-        <div className="flex items-center mb-4">
-          <Avatar name={authorName} />
-          <div className="ml-3">
-            <div className="text-gray-800 font-semibold">{authorName}</div>
-            <div className="flex items-center text-gray-500 text-sm">
-              <Circle />
-              <span className="ml-2">{publishedDate}</span>
-            </div>
-          </div>
+    <div className="h-auto md:max-w-screen-lg max-w-screen-sm bg-emerald-50 w-full p-6 rounded-lg shadow-md border border-emerald-700 hover:shadow-lg transition-shadow duration-300 ease-in-out">
+      <Link to={`/blog/${id}`}>
+        <div className="mb-2">
+          <h2 className="text-2xl font-bold capitalize">{title}</h2>
         </div>
-        <div className="text-2xl font-bold text-gray-900 mb-2">{title}</div>
-        <div className="text-gray-700 mb-4">
-          {content.slice(0, 100) + "..."}
+
+        <div className="mb-3 flex justify-between">
+          <div className="text-sm text-gray-800 capitalize">{authorName}</div>
+          <div className="text-sm text-gray-800">{publishedDate}</div>
         </div>
-        <div className="text-gray-500 text-sm">{`${Math.ceil(
+
+        <div className="mb-4">
+          <p className="text-justify">
+            {content.slice(0, 500) + " .... "}
+            <span className="underline cursor-pointer">Read more</span>
+          </p>
+        </div>
+
+        <div className="text-gray-700 text-sm">{`${Math.ceil(
           content.length / 100
         )} minute(s) read`}</div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 };
 
